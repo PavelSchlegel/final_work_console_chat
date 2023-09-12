@@ -7,6 +7,7 @@ namespace chat {
     class IClient
     {
     public:
+        virtual void msg_recv(const std::string& msg) = 0;
         virtual void msg_send(const std::string& msg) = 0;
         virtual void new_user(const std::string& nike_name, std::size_t hash) = 0;
         virtual void login(const std::string& nike_name, std::size_t hash) = 0;
