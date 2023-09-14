@@ -15,4 +15,16 @@ namespace chat {
         virtual void connect(IServer& server) = 0;
         virtual void disconnect() = 0;
     };
+
+    class Client: public IClient
+    {
+    public:
+        void msg_recv(const std::string& msg) {}
+        void msg_send(const std::string& msg) {}
+        void new_user(const std::string& nike_name, std::size_t hash) {}
+        void login(const std::string& nike_name, std::size_t hash) {}
+        void exit() {}
+        void connect(IServer& server) {}
+        void disconnect() {}
+    };
 }
