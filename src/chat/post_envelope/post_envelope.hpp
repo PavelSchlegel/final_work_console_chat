@@ -44,4 +44,9 @@ public:
     {
         m_sender = sender;
     }
+
+    void set_msg(const std::string& msg)
+    {
+        m_msg = msg;
+    }
 };
