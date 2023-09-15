@@ -40,7 +40,14 @@ namespace chat {
 
     class LoginedClient: public IState
     {
+        std::string m_my_name;
     public:
+        explicit LoginedClient(std::string name) noexcept
+        : m_my_name(std::move(name))
+        {
+
+        }
+
         void msg_accept_to(const std::string& msg, const std::string& who) override
         {
             // for (auto& rec: get_server().m_clients) {
@@ -59,7 +66,7 @@ namespace chat {
         void login(const std::string& nike_name, std::size_t hash) override {}
         void exit() override
         {
-            get_server().logg_out(get_client());
+            // get_server().logg_out(get_client());
             m_context->set_state(new UnloginedClient);
         }
     };
@@ -81,8 +88,8 @@ namespace chat {
         for (auto& rec: get_server().m_users) {
             if (rec.m_userName == nick_name) {
                 if (rec.m_userHash == hash) {
-                    get_server().m_users_log.emplace(nick_name, get_client());
-                    m_context->set_state(new LoginedClient);
+                    // get_server().m_users_log.emplace(nick_name, get_client());
+                    m_context->set_state(new LoginedClient(nick_name));
                     return;
                 }
             }

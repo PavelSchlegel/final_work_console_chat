@@ -88,7 +88,7 @@ namespace chat {
     {
     private:
     public:
-        std::map<std::string, IClient*> m_users_log; //logined users
+        // std::map<std::string, IClient*> m_users_log; //logined users
         std::vector<UserHash> m_users; //user registr
         std::map<IClient*, ServerHandle> m_clients; //connected
         IServerHandle& connect(IClient& client) override
@@ -100,14 +100,14 @@ namespace chat {
             return it->second;
         }
 
-        void logg_out(IClient& client) noexcept
-        {
-            for (auto it = m_users_log.begin(); it != m_users_log.end(); ++it) {
-                if (it->second == &client) {
-                    m_users_log.erase(it);
-                }
-            }
-        }
+        // void logg_out(IClient& client) noexcept
+        // {
+        //     for (auto it = m_users_log.begin(); it != m_users_log.end(); ++it) {
+        //         if (it->second == &client) {
+        //             m_users_log.erase(it);
+        //         }
+        //     }
+        // }
 
         void disconnect(IClient& client) override
         {

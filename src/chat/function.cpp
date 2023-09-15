@@ -3,10 +3,26 @@
 
 std::string get_nick_name()
 {
-    std::string nick;
-    std::cout << "Enter you nickname:" << std::endl;
-    std::getline(std::cin, nick);
-    return nick;
+    std::cout << "Enter your nickname:" << std::endl;
+    while (true) {
+        bool valid_pass = false;
+        std::string pass;
+        std::getline(std::cin, pass);
+        for (std::size_t i = 0; i < pass.size() && !valid_pass; ++i) {
+            if (std::isalpha(pass[i])) {
+                continue;
+            }
+
+            if (pass[i] == ' ') {
+                continue;
+            }
+
+            valid_pass = true;
+        }
+        if (!valid_pass) {
+            return pass;
+        }
+    }
 }
 
 std::size_t get_pass()
@@ -21,6 +37,7 @@ std::size_t get_pass()
 std::string get_msg()
 {
     std::string msg;
+    std::cout << "Enter your message:" << std::endl;
     std::getline(std::cin, msg);
     return msg;
 }
