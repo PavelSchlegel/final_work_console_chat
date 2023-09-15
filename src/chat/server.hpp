@@ -42,7 +42,7 @@ namespace chat {
         void msg_accept_to(const std::string& msg, const std::string& who) override
         {
             auto state = m_state;
-            state->msg_accept_to(msg);
+            state->msg_accept_to(msg, who);
             if (state != m_state) {
                 delete state;
             }
@@ -65,6 +65,7 @@ namespace chat {
                 delete state;
             }
         }
+        
         void exit() override
         {
             auto state = m_state;
@@ -107,7 +108,7 @@ namespace chat {
                 }
             }
         }
-        
+
         void disconnect(IClient& client) override;
         friend class ServerHandle;
     };
