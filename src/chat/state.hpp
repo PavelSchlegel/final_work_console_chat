@@ -1,6 +1,7 @@
 #pragma once
 #include "server.hpp"
 #include "iclient.hpp"
+#include "server.hpp"
 
 namespace chat {
     class LoginedClient;
@@ -15,13 +16,17 @@ namespace chat {
             return m_context->m_server;
         }
 
-        IClient& get_client() const noexcept
+        Client& get_client() const noexcept
         {
             return m_context->m_client;
         }
 
     public:
-        virtual void msg_recv(const std::string& msg) = 0;
+        virtual void msg_accept() = 0;
+        virtual void new_user() = 0;
+        virtual void login() = 0;
+        virtual void exit() = 0;
+        virtual void disconnect() = 0;
         void set_context(chat::ServerHandle* context)
         {
             m_context = context;
@@ -31,10 +36,9 @@ namespace chat {
     class UnloginedClient: public IState
     {
     public:
-        void msg_recv(const std::string& msg) override {}
         void msg_accept() override {}
         void new_user() override;
-        void login() override; 
+        void login() override;
         void exit() override {}
         void disconnect() override
         {
@@ -60,20 +64,16 @@ namespace chat {
         {
             std::string msg = get_msg();
             for (auto& rec: get_server().m_clients) {
-                if(rec.second.)
+                if (&rec.second != m_context) {
+                    rec.first->msg_recv(m_my_name, msg);
+                }
             }
-        }
-
-        void msg_recv(const std::string& msg) override
-        {
-            get_client().msg_recv(msg);
         }
 
         void new_user() override {}
         void login() override {}
         void exit() override
         {
-            // get_server().logg_out(get_client());
             m_context->set_state(new UnloginedClient);
         }
 
@@ -89,27 +89,30 @@ namespace chat {
 
     inline void UnloginedClient::new_user()
     {
+        std::string nick_name = get_nick_name();
+        std::size_t hash = get_pass();
         for (auto& rec: get_server().m_users) {
             if (rec.m_userName == nick_name) {
-                get_client().msg_recv("Nick is used!");
+                get_client().msg_recv("SERVER:", "Nick is used!");
                 return;
             }
         }
         get_server().m_users.emplace_back(UserHash{nick_name, hash});
-        get_server().m_users_log.emplace(nick_name, get_client());
+        m_context->set_state(new LoginedClient(nick_name));
     }
 
     inline void UnloginedClient::login()
     {
+        std::string nick_name = get_nick_name();
+        std::size_t hash = get_pass();
         for (auto& rec: get_server().m_users) {
             if (rec.m_userName == nick_name) {
                 if (rec.m_userHash == hash) {
-                    // get_server().m_users_log.emplace(nick_name, get_client());
                     m_context->set_state(new LoginedClient(nick_name));
                     return;
                 }
             }
         } //у юзеров уникальные ники
-        get_client().msg_recv("User was not found!");    
+        get_client().msg_recv("SERVER:","Invalid pass or nickname!");    
     }
 }

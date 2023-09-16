@@ -10,7 +10,7 @@ namespace chat {
     class IClient
     {
     public:
-        virtual void msg_recv(const std::string& msg) = 0;
+        virtual void msg_recv(const std::string& who, const std::string& msg) = 0;
         virtual void msg_send() = 0;
         virtual void new_user() = 0;
         virtual void login() = 0;
@@ -32,11 +32,12 @@ namespace chat {
 
         ~TerminalClient()
         {
-
+            m_server_handle.disconnect();
         }
 
-        void msg_recv(const std::string& msg)
+        void msg_recv(const std::string& who, const std::string& msg) override
         {
+            std::cout << who << ":" << '\n';
             std::cout << msg << std::endl;
         }
 
@@ -59,12 +60,6 @@ namespace chat {
         {
             m_server_handle.exit();
         }
-/*
-        void disconnect() override
-        {
-            exit();
-            m_server->disconnect(*this);
-        }
-*/
+
     };
 };

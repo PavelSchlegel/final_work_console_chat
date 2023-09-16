@@ -29,11 +29,6 @@ namespace chat {
             delete m_state;
         }
 
-        void msg_recv(const std::string& msg)
-        {
-            
-        }
-
         void set_state(IState* state)
         {
             m_state = state;
@@ -51,7 +46,7 @@ namespace chat {
         void new_user() override
         {
             auto state = m_state;
-            state->new_user(nike_name, hash);
+            state->new_user();
             if (state != m_state) {
                 delete state;
             }
@@ -79,7 +74,6 @@ namespace chat {
         {
             m_state->disconnect();
         }
-
         friend class IState;
     };
 
