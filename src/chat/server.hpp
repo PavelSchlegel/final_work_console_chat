@@ -39,16 +39,16 @@ namespace chat {
             m_state = state;
         }
 
-        void msg_accept_to(const std::string& msg, const std::string& who) override
+        void msg_accept() override
         {
             auto state = m_state;
-            state->msg_accept_to(msg, who);
+            state->msg_accept();
             if (state != m_state) {
                 delete state;
             }
         }
 
-        void new_user(const std::string& nike_name, std::size_t hash) override
+        void new_user() override
         {
             auto state = m_state;
             state->new_user(nike_name, hash);
@@ -57,10 +57,10 @@ namespace chat {
             }
         }
 
-        void login(const std::string& nike_name, std::size_t hash) override
+        void login() override
         {
             auto state = m_state;
-            state->login(nike_name, hash);
+            state->login();
             if (state != m_state) {
                 delete state;
             }
@@ -73,6 +73,11 @@ namespace chat {
             if (state != m_state) {
                 delete state;
             }
+        }
+
+        void disconnect() override
+        {
+            m_state->disconnect();
         }
 
         friend class IState;
@@ -88,7 +93,6 @@ namespace chat {
     {
     private:
     public:
-        // std::map<std::string, IClient*> m_users_log; //logined users
         std::vector<UserHash> m_users; //user registr
         std::map<IClient*, ServerHandle> m_clients; //connected
         IServerHandle& connect(IClient& client) override
@@ -99,15 +103,6 @@ namespace chat {
             );
             return it->second;
         }
-
-        // void logg_out(IClient& client) noexcept
-        // {
-        //     for (auto it = m_users_log.begin(); it != m_users_log.end(); ++it) {
-        //         if (it->second == &client) {
-        //             m_users_log.erase(it);
-        //         }
-        //     }
-        // }
 
         void disconnect(IClient& client) override
         {

@@ -32,10 +32,18 @@ namespace chat {
     {
     public:
         void msg_recv(const std::string& msg) override {}
-        void msg_accept_to(const std::string& msg, const std::string& who) override {}
-        void new_user(const std::string& nike_name, std::size_t hash) override;
-        void login(const std::string& nick_name, std::size_t hash) override; 
+        void msg_accept() override {}
+        void new_user() override;
+        void login() override; 
         void exit() override {}
+        void disconnect() override
+        {
+            for (auto it = get_server().m_clients.begin(); it != get_server().m_clients.end(); ++it) {
+                if (it->first == &get_client()) {
+                    get_server().m_clients.erase(it);
+                }
+            }
+        }
     };
 
     class LoginedClient: public IState
@@ -48,13 +56,12 @@ namespace chat {
 
         }
 
-        void msg_accept_to(const std::string& msg, const std::string& who) override
+        void msg_accept() override
         {
-            // for (auto& rec: get_server().m_clients) {
-            //     if (m_context != &rec.second) {
-            //         rec.second.msg_recv(msg);
-            //     }
-            // }
+            std::string msg = get_msg();
+            for (auto& rec: get_server().m_clients) {
+                if(rec.second.)
+            }
         }
 
         void msg_recv(const std::string& msg) override
@@ -62,16 +69,25 @@ namespace chat {
             get_client().msg_recv(msg);
         }
 
-        void new_user(const std::string& nike_name, std::size_t hash) override {}
-        void login(const std::string& nike_name, std::size_t hash) override {}
+        void new_user() override {}
+        void login() override {}
         void exit() override
         {
             // get_server().logg_out(get_client());
             m_context->set_state(new UnloginedClient);
         }
+
+        void disconnect() override
+        {
+            for (auto it = get_server().m_clients.begin(); it != get_server().m_clients.end(); ++it) {
+                if (it->first == &get_client()) {
+                    get_server().m_clients.erase(it);
+                }
+            }
+        }
     };
 
-    inline void UnloginedClient::new_user(const std::string& nick_name, std::size_t hash)
+    inline void UnloginedClient::new_user()
     {
         for (auto& rec: get_server().m_users) {
             if (rec.m_userName == nick_name) {
@@ -83,7 +99,7 @@ namespace chat {
         get_server().m_users_log.emplace(nick_name, get_client());
     }
 
-    inline void UnloginedClient::login(const std::string& nick_name, std::size_t hash)
+    inline void UnloginedClient::login()
     {
         for (auto& rec: get_server().m_users) {
             if (rec.m_userName == nick_name) {
