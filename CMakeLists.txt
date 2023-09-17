@@ -23,7 +23,7 @@ project(console_chat LANGUAGES CXX C VERSION 0.0.1)
 
 
 add_executable(${PROJECT_NAME} main.cpp)
-target_link_libraries(${PROJECT_NAME} PUBLIC ./src/chat)
+target_link_libraries(${PROJECT_NAME} PUBLIC chat)
 
 set_target_properties(${PROJECT_NAME}
     PROPERTIES
