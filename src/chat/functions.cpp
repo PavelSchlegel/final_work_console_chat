@@ -1,6 +1,33 @@
-#include "function.hpp"
+#include "functions.hpp"
 #include <iostream>
 #include <boost/lexical_cast.hpp>
+
+bool is_pass_valid(const std::string& pass) noexcept
+{
+    return true;
+}
+
+bool is_nick_valid(const std::string& nick) noexcept
+{
+    bool valid_nick = true;
+    for (std::size_t i = 0; i < nick.size(); ++i) {
+        if (std::isalpha(nick[i])) {
+            continue;
+        }
+
+        if (nick[i] == ' ') {
+            continue;
+        }
+
+        valid_nick = false;
+    }
+
+    if (valid_nick) {
+        return true;
+    }
+
+    return false;
+}
 
 void com_parser(chat::TerminalClient *client) noexcept
 {
@@ -35,25 +62,18 @@ void com_parser(chat::TerminalClient *client) noexcept
 std::string get_nick_name()
 {
     std::cout << "Enter your nickname:" << std::endl;
-    while (true) {
-        bool valid_nick = false;
-        std::string nick;
-        std::getline(std::cin, nick);
-        for (std::size_t i = 0; i < nick.size() && !valid_nick; ++i) {
-            if (std::isalpha(nick[i])) {
-                continue;
-            }
-
-            if (nick[i] == ' ') {
-                continue;
-            }
-
-            valid_nick = true;
+    for (std::string line; std::getline(std::cin, line);) {
+        if (line.empty()) {
+            std::cout << "ERROR: line is empty!" << std::endl;
+            continue;
         }
-        if (!valid_nick) {
-            return nick;
+
+        if (is_nick_valid(line)) {
+            return line;
         }
     }
+    
+    return "DEFAULT";
 }
 
 std::size_t get_pass()

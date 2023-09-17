@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "function.hpp"
+#include "functions.hpp"
 /*
 class Gmock: public chat::TerminalClient
 {

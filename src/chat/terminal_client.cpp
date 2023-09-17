@@ -1,5 +1,4 @@
-#include "function.hpp"
-#include "function.hpp"
+#include "functions.hpp"
 
 void chat::TerminalClient::msg_send()
 {
