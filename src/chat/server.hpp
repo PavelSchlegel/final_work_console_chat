@@ -34,28 +34,28 @@ namespace chat {
             m_state = state;
         }
 
-        void msg_accept() override
+        void msg_accept(const std::string& msg) override
         {
             auto state = m_state;
-            state->msg_accept();
+            state->msg_accept(msg);
             if (state != m_state) {
                 delete state;
             }
         }
 
-        void new_user() override
+        void new_user(const std::string& nick_name, std::size_t hash) override
         {
             auto state = m_state;
-            state->new_user();
+            state->new_user(nick_name, hash);
             if (state != m_state) {
                 delete state;
             }
         }
 
-        void login() override
+        void login(const std::string& nick_name, std::size_t hash) override
         {
             auto state = m_state;
-            state->login();
+            state->login(nick_name, hash);
             if (state != m_state) {
                 delete state;
             }
@@ -74,6 +74,7 @@ namespace chat {
         {
             m_state->disconnect();
         }
+
         friend class IState;
     };
 
@@ -107,4 +108,4 @@ namespace chat {
 
         friend class ServerHandle;
     };
-}
+} // namespace chat

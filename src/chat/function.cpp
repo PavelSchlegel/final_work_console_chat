@@ -2,7 +2,7 @@
 #include <iostream>
 #include <boost/lexical_cast.hpp>
 
-void com_parser(chat::IClient *client) noexcept
+void com_parser(chat::TerminalClient *client) noexcept
 {
     std::cout << "Welcom to console chat!" << std::endl;
     std::cout << "Enter your command:" << std::endl;

@@ -22,9 +22,9 @@ namespace chat {
         }
 
     public:
-        virtual void msg_accept() = 0;
-        virtual void new_user() = 0;
-        virtual void login() = 0;
+        virtual void msg_accept(const std::string& msg) = 0;
+        virtual void new_user(const std::string& nick_name, std::size_t hash) = 0;
+        virtual void login(const std::string& nick_name, std::size_t hash) = 0;
         virtual void exit() = 0;
         virtual void disconnect() = 0;
         void set_context(chat::ServerHandle* context)
@@ -36,9 +36,9 @@ namespace chat {
     class UnloginedClient: public IState
     {
     public:
-        void msg_accept() override {}
-        void new_user() override;
-        void login() override;
+        void msg_accept(const std::string& msg) override {}
+        void new_user(const std::string& nick_name, std::size_t hash) override;
+        void login(const std::string& nick_name, std::size_t hash) override;
         void exit() override {}
         void disconnect() override
         {
@@ -60,9 +60,8 @@ namespace chat {
 
         }
 
-        void msg_accept() override
+        void msg_accept(const std::string& msg) override
         {
-            std::string msg = get_msg();
             for (auto& rec: get_server().m_clients) {
                 if (&rec.second != m_context) {
                     rec.first->msg_recv(m_my_name, msg);
@@ -70,8 +69,8 @@ namespace chat {
             }
         }
 
-        void new_user() override {}
-        void login() override {}
+        void new_user(const std::string& nick_name, std::size_t hash) override {}
+        void login(const std::string& nick_name, std::size_t hash) override {}
         void exit() override
         {
             m_context->set_state(new UnloginedClient);
@@ -87,10 +86,8 @@ namespace chat {
         }
     };
 
-    inline void UnloginedClient::new_user()
+    inline void UnloginedClient::new_user(const std::string& nick_name, std::size_t hash)
     {
-        std::string nick_name = get_nick_name();
-        std::size_t hash = get_pass();
         for (auto& rec: get_server().m_users) {
             if (rec.m_userName == nick_name) {
                 get_client().msg_recv("SERVER:", "Nick is used!");
@@ -101,10 +98,8 @@ namespace chat {
         m_context->set_state(new LoginedClient(nick_name));
     }
 
-    inline void UnloginedClient::login()
+    inline void UnloginedClient::login(const std::string& nick_name, std::size_t hash)
     {
-        std::string nick_name = get_nick_name();
-        std::size_t hash = get_pass();
         for (auto& rec: get_server().m_users) {
             if (rec.m_userName == nick_name) {
                 if (rec.m_userHash == hash) {
