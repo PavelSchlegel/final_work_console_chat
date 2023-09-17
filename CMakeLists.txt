@@ -1,23 +1,21 @@
 cmake_minimum_required(VERSION 3.18)
 
 include(FetchContent)
-# FetchContent_Declare(
-#     zlib
-#     URL https://github.com/madler/zlib/releases/download/v1.3/zlib-1.3.tar.gz
-#     OVERRIDE_FIND_PACKAGE
-# )
 
-# FetchContent_GetProperties(zlib)
-# find_package(ZLIB REQUIRED)
-# add_library(ZLIB::ZLIB ALIAS zlibstatic)
-# target_include_directories(zlibstatic PUBLIC ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR})
-
-# set(BOOST_IOSTREAMS_ENABLE_ZLIB ON CACHE INTERNAL "")
 FetchContent_Declare(
     boost
     URL https://github.com/boostorg/boost/releases/download/boost-1.83.0/boost-1.83.0.tar.gz
 )
 FetchContent_MakeAvailable(boost)
+
+include(FetchContent)
+enable_testing()
+
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
+)
+FetchContent_MakeAvailable(googletest)
 
 add_subdirectory(src)
 
@@ -25,6 +23,7 @@ project(console_chat LANGUAGES CXX C VERSION 0.0.1)
 
 
 add_executable(${PROJECT_NAME} main.cpp)
+target_link_libraries(${PROJECT_NAME} PUBLIC ./src/chat)
 
 set_target_properties(${PROJECT_NAME}
     PROPERTIES

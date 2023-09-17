@@ -16,7 +16,7 @@ namespace chat {
             return m_context->m_server;
         }
 
-        Client& get_client() const noexcept
+        IClient& get_client() const noexcept
         {
             return m_context->m_client;
         }
