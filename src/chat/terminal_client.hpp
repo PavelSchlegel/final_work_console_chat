@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
-#include "iserver.hpp"
-#include "iclient.hpp"
+#include "interfaces.hpp"
 
 namespace chat {
 

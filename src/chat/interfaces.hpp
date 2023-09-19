@@ -1,8 +1,15 @@
-#pragma once
+#ifndef INTERFACES
+#define INTERFACES
 #include <string>
 
 namespace chat {
-    class IClient;
+
+    class IClient
+    {
+    public:
+        virtual ~IClient() noexcept {}
+        virtual void msg_recv(const std::string& who, const std::string& msg) = 0;
+    };
 
     class IServerHandle
     {
@@ -18,8 +25,9 @@ namespace chat {
     class IServer
     {
     public:
+        virtual ~IServer() noexcept {}
         virtual IServerHandle& connect(IClient& client) = 0;
         virtual void disconnect(IClient& client) = 0;
     };
-
-}
+}; // namespace chat
+#endif //INTERFACES

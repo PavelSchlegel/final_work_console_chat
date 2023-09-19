@@ -1,7 +1,6 @@
-#pragma once
-#include "server.hpp"
-#include "iclient.hpp"
-#include "server.hpp"
+#ifndef STATE
+#define STATE
+#include "serverhandle.hpp"
 
 namespace chat {
     class LoginedClient;
@@ -9,7 +8,7 @@ namespace chat {
     class IState: public IServerHandle
     {
     protected:
-        chat::ServerHandle* m_context;
+        ServerHandle* m_context;
 
         Server& get_server() const noexcept
         {
@@ -40,14 +39,7 @@ namespace chat {
         void new_user(const std::string& nick_name, std::size_t hash) override;
         void login(const std::string& nick_name, std::size_t hash) override;
         void exit() override {}
-        void disconnect() override
-        {
-            for (auto it = get_server().m_clients.begin(); it != get_server().m_clients.end(); ++it) {
-                if (it->first == &get_client()) {
-                    get_server().m_clients.erase(it);
-                }
-            }
-        }
+        void disconnect() override;
     };
 
     class LoginedClient: public IState
@@ -60,15 +52,7 @@ namespace chat {
 
         }
 
-        void msg_accept(const std::string& msg) override
-        {
-            for (auto& rec: get_server().m_clients) {
-                if (&rec.second != m_context) {
-                    rec.first->msg_recv(m_my_name, msg);
-                }
-            }
-        }
-
+        void msg_accept(const std::string& msg) override;
         void new_user(const std::string& nick_name, std::size_t hash) override {}
         void login(const std::string& nick_name, std::size_t hash) override {}
         void exit() override
@@ -76,38 +60,7 @@ namespace chat {
             m_context->set_state(new UnloginedClient);
         }
 
-        void disconnect() override
-        {
-            for (auto it = get_server().m_clients.begin(); it != get_server().m_clients.end(); ++it) {
-                if (it->first == &get_client()) {
-                    get_server().m_clients.erase(it);
-                }
-            }
-        }
+        void disconnect() override;
     };
-
-    inline void UnloginedClient::new_user(const std::string& nick_name, std::size_t hash)
-    {
-        for (auto& rec: get_server().m_users) {
-            if (rec.m_userName == nick_name) {
-                get_client().msg_recv("SERVER:", "Nick is used!");
-                return;
-            }
-        }
-        get_server().m_users.emplace_back(UserHash{nick_name, hash});
-        m_context->set_state(new LoginedClient(nick_name));
-    }
-
-    inline void UnloginedClient::login(const std::string& nick_name, std::size_t hash)
-    {
-        for (auto& rec: get_server().m_users) {
-            if (rec.m_userName == nick_name) {
-                if (rec.m_userHash == hash) {
-                    m_context->set_state(new LoginedClient(nick_name));
-                    return;
-                }
-            }
-        } //у юзеров уникальные ники
-        get_client().msg_recv("SERVER:","Invalid pass or nickname!");    
-    }
-}
+} // namespace chat
+#endif //STATE

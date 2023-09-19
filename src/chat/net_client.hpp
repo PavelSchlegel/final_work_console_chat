@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
-#include "iserver.hpp"
-#include "iclient.hpp"
+#include "interfaces.hpp"
 #include <boost/asio.hpp>
 #include <boost/asio/spawn.hpp>
 

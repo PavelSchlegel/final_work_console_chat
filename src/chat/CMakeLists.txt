@@ -1,6 +1,6 @@
 project(chat LANGUAGES CXX C)
 
-add_library(${PROJECT_NAME} STATIC server.cpp functions.cpp terminal_client.cpp)
+add_library(${PROJECT_NAME} STATIC server.cpp functions.cpp terminal_client.cpp serverhandle.cpp state.cpp)
 
 set_target_properties(${PROJECT_NAME}
     PROPERTIES
