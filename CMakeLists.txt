@@ -24,6 +24,8 @@ project(console_chat LANGUAGES CXX C VERSION 0.0.1)
 
 add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} PUBLIC chat)
+target_link_libraries(${PROJECT_NAME} PUBLIC pass_lib)
+target_link_libraries(${PROJECT_NAME} PUBLIC Boost::headers)
 
 set_target_properties(${PROJECT_NAME}
     PROPERTIES
@@ -34,5 +36,3 @@ set_target_properties(${PROJECT_NAME}
         C_STANDARD_REQUIRED YES
         C_EXTENSIONS YES
 )
-
-target_link_libraries(${PROJECT_NAME} PUBLIC Boost::headers chat)
