@@ -12,7 +12,7 @@ set_target_properties(${PROJECT_NAME}
         C_EXTENSIONS YES
 )
 
-target_link_libraries(${PROJECT_NAME} PUBLIC Boost::lexical_cast Boost::asio)
+target_link_libraries(${PROJECT_NAME} PUBLIC Boost::lexical_cast Boost::asio Boost::json)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../)
 

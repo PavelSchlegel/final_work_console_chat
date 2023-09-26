@@ -3,6 +3,7 @@
 #include "interfaces.hpp"
 #include <boost/asio.hpp>
 #include <boost/asio/spawn.hpp>
+#include <boost/json.hpp>
 
 namespace chat {
     using boost::asio::ip::tcp;
@@ -27,6 +28,9 @@ namespace chat {
 
         void msg_recv(const std::string& who, const std::string& msg) override
         {
+            boost::json::value message {{"who", who}, {"message", msg}};
+            std::string line = boost::json::serialize(message);
+            boost::asio::async_write(m_socket, boost::asio::const_buffer(line.data(), line.size()), boost::asio::detached);
             //wriete
         }
 

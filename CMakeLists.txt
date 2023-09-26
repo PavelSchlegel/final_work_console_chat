@@ -19,15 +19,26 @@ FetchContent_MakeAvailable(googletest)
 
 add_subdirectory(src)
 
-project(console_chat LANGUAGES CXX C VERSION 0.0.1)
+project(chat LANGUAGES CXX C VERSION 0.0.1)
 
 
-add_executable(${PROJECT_NAME} main.cpp)
-target_link_libraries(${PROJECT_NAME} PUBLIC chat)
-target_link_libraries(${PROJECT_NAME} PUBLIC pass_lib)
-target_link_libraries(${PROJECT_NAME} PUBLIC Boost::headers)
+add_executable(${PROJECT_NAME}-server server.cpp)
+target_link_libraries(${PROJECT_NAME}-server PUBLIC chat)
 
-set_target_properties(${PROJECT_NAME}
+set_target_properties(${PROJECT_NAME}-server
+    PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED YES
+        CXX_EXTENSIONS YES
+        C_STANDARD 11
+        C_STANDARD_REQUIRED YES
+        C_EXTENSIONS YES
+)
+
+add_executable(${PROJECT_NAME}-client client.cpp)
+target_link_libraries(${PROJECT_NAME}-client PUBLIC chat)
+
+set_target_properties(${PROJECT_NAME}-client
     PROPERTIES
         CXX_STANDARD 17
         CXX_STANDARD_REQUIRED YES

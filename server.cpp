@@ -11,6 +11,10 @@ int main (int argc, char* argv[])
         if (argc != 2)
         {
             std::cerr << "Usage: chat_server <port>\n";
+            /*
+            example
+            port: 2020
+            */
             return 1;
         }
 

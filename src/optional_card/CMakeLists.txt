@@ -3,8 +3,8 @@ project(pass_lib LANGUAGE CXX)
 set
 (
     SOURCES
-    pass_processing.cpp
-    pass_processing.hpp
+    optional_card.cpp
+    optional_card.hpp
 )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})

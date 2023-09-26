@@ -1,6 +1,6 @@
 #ifndef OPTIONAL_FUNCTOR  // temporary name
 #define OPTIONAL_FUNCTOR  // vorübergehende Name
-#include <string>
+#include <cctype>
 
 class Optional_card
 {
