@@ -2,11 +2,13 @@
 #include <boost/asio/spawn.hpp>
 #include <iostream>
 #include <chat/server.hpp>
+#include <fstream>
 
 int main (int argc, char* argv[])
 {
+    std::fstream logger("log_server.txt", std::ios::out);
     using boost::asio::ip::tcp;
-    chat::Server server;
+    chat::Server server(logger);
     try {
         if (argc != 2)
         {
@@ -30,9 +32,10 @@ int main (int argc, char* argv[])
                     boost::system::error_code ec;
                     tcp::socket socket(io_context);
                     acceptor.async_accept(socket, yield[ec]);
+                    logger << "NEW_CONNECT" << std::endl;
                     if (!ec)
                     {
-                        std::make_shared<chat::NetClient>(server, std::move(socket))->go(io_context);
+                        std::make_shared<chat::NetClient>(server, std::move(socket), logger)->go(io_context);
                     }
                 }
             },

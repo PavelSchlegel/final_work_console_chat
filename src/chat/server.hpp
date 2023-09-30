@@ -18,14 +18,23 @@ namespace chat {
     {
     private:
         friend class ServerHandle;
+        std::ostream& m_logger;
+
     public:
         std::vector<UserHash> m_users; //user registr
         std::map<IClient*, ServerHandle> m_clients; //connected
+
+        Server (std::ostream& logger)
+        : m_logger(logger)
+        {
+
+        }
+
         IServerHandle& connect(IClient& client) override
         {
             auto [it, inserted] = m_clients.emplace(std::piecewise_construct,
                 std::forward_as_tuple(&client),
-                std::forward_as_tuple(*this, client)
+                std::forward_as_tuple(*this, client, m_logger)
             );
             return it->second;
         }

@@ -13,8 +13,9 @@ namespace chat {
     protected:
         Server& m_server;
         IClient& m_client;
+        std::ostream& m_logger;
     public:
-        ServerHandle(Server& server, IClient& client);
+        ServerHandle(Server& server, IClient& client, std::ostream& logger);
         ~ServerHandle() noexcept;
 
         void set_state(IState* state);
@@ -23,6 +24,7 @@ namespace chat {
         void login(const std::string& nick_name, std::size_t hash) override;
         void exit() override;
         void disconnect() override;
+        void echo() override;
     };
 } // namespace chat
 #endif //SERVERHANDLE

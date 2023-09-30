@@ -40,6 +40,7 @@ namespace chat {
         void login(const std::string& nick_name, std::size_t hash) override;
         void exit() override {}
         void disconnect() override;
+        void echo() override {};
     };
 
     class LoginedClient: public IState
@@ -61,6 +62,7 @@ namespace chat {
         }
 
         void disconnect() override;
+        void echo() override {};
     };
 } // namespace chat
 #endif //STATE

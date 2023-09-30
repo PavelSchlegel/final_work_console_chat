@@ -3,10 +3,11 @@
 
 using namespace chat;
 
-ServerHandle::ServerHandle(Server& server, IClient& client)
+ServerHandle::ServerHandle(Server& server, IClient& client, std::ostream& logger)
 : m_state(new UnloginedClient)
 , m_client(client)
 , m_server(server)
+, m_logger(logger)
 {
     m_state->set_context(this);
 }
@@ -61,4 +62,9 @@ void ServerHandle::exit()
 void ServerHandle::disconnect()
 {
     m_state->disconnect();
+}
+
+void ServerHandle::echo()
+{
+    
 }

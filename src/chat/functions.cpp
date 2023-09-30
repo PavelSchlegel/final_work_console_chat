@@ -13,19 +13,23 @@ void com_parser(chat::TerminalClient *client) noexcept
                 std::cout << std::endl;
                 continue;
             }
-            if (line.find("newuser")) {
+            if (line.find("echo") != std::string::npos) {
+                client->echo();
+                continue;
+            }
+            if (line.find("newuser") != std::string::npos) {
                 client->new_user();
                 continue;
             }
-            if (line.find("login")) {
+            if (line.find("login") != std::string::npos) {
                 client->login();
                 continue;
             }
-            if (line.find("send")) {
+            if (line.find("send") != std::string::npos) {
                 client->msg_send();
                 continue;
             }
-            if (line.find("exit")) {
+            if (line.find("exit") != std::string::npos) {
                 client->exit();
                 return;
             }

@@ -20,6 +20,7 @@ namespace chat {
         virtual void login(const std::string& nick_name, std::size_t hash) = 0;
         virtual void exit() = 0;
         virtual void disconnect() = 0;
+        virtual void echo() = 0;
     };
 
     class IServer

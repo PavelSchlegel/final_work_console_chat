@@ -32,10 +32,14 @@ namespace chat {
 
         void login();
 
+        void echo()
+        {
+            m_server_handle.echo();
+        }
+
         void exit()
         {
             m_server_handle.exit();
         }
-
     };
 } // namespace chat
