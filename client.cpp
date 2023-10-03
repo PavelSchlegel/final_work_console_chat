@@ -19,6 +19,15 @@ int main(int argc, char* argv[])
 
     chat::NetServer server(/*argv[1], argv[2]*/"127.0.0.1", "2020", logger);
     chat::TerminalClient client(&server);
-    com_parser(&client);
+
+    std::cout << "Welcom to console chat!" << std::endl;
+    std::cout << "Enter your command or info to see methods:" << std::endl;
+    while (1) {
+        std::string line;
+        std::getline(std::cin, line);
+        client.go(line);
+        line.clear();
+    }
+
     return 0;
 }

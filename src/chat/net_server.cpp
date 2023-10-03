@@ -5,11 +5,23 @@ using namespace chat;
 using namespace boost::json;
 using namespace boost::asio;
 
+void context_run(boost::asio::io_context& io_context)
+{
+    io_context.run();
+}
+
 NetServer::NetServer(std::string_view host, std::string_view port, std::ostream& logger)
 : m_logger(logger)
 {
     tcp::resolver resolver(io_context);
     boost::asio::connect(socket, resolver.resolve(host, port));
+}
+
+NetServer::~NetServer()
+{
+    if (m_run.joinable()) {
+        m_run.join();
+    }
 }
 
 void NetServer::go(boost::asio::yield_context yield)
@@ -90,6 +102,8 @@ IServerHandle& NetServer::connect(IClient& client)
         boost::asio::detached
     );
     m_logger << "CONNECT" << std::endl;
+    std::thread T(context_run, std::ref(io_context));
+    m_run = std::move(T);
     return *this;
 }
 

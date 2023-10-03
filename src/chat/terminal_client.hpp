@@ -1,45 +1,33 @@
 #pragma once
 #include <iostream>
 #include "interfaces.hpp"
+#include <functional>
 
 namespace chat {
 
     class TerminalClient: public chat::IClient
     {
     private:
+
+        using Method = void (TerminalClient::*)();
+        using Method_list = std::vector<std::pair<std::string, Method>>;
+
         IServerHandle& m_server_handle;
-    public:
-        TerminalClient(chat::IServer* server = nullptr)
-        : m_server_handle(server->connect(*this))
-        {
-            
-        }
-
-        ~TerminalClient()
-        {
-            m_server_handle.disconnect();
-        }
-
-        void msg_recv(const std::string& who, const std::string& msg) override
-        {
-            std::cout << who << ":" << '\n';
-            std::cout << msg << std::endl;
-        }
+        Method_list methods;
 
         void msg_send();
-
         void new_user();
-
         void login();
+        void echo();
+        void exit();
 
-        void echo()
-        {
-            m_server_handle.echo();
-        }
+    public:
 
-        void exit()
-        {
-            m_server_handle.exit();
-        }
+        TerminalClient(chat::IServer* server = nullptr);
+        ~TerminalClient();
+
+        void msg_recv(const std::string& who, const std::string& msg) override;
+        void go(const std::string& method);
+        void info();
     };
 } // namespace chat

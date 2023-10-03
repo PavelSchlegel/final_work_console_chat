@@ -3,40 +3,6 @@
 #include <boost/lexical_cast.hpp>
 #include "./optional_card/optional_card.hpp"
 
-void com_parser(chat::TerminalClient *client) noexcept
-{
-    std::cout << "Welcom to console chat!" << std::endl;
-    std::cout << "Enter your command:" << std::endl;
-    while (true) {
-        for (std::string line; std::getline(std::cin, line);) {
-            if (line.empty()) {
-                std::cout << std::endl;
-                continue;
-            }
-            if (line.find("echo") != std::string::npos) {
-                client->echo();
-                continue;
-            }
-            if (line.find("newuser") != std::string::npos) {
-                client->new_user();
-                continue;
-            }
-            if (line.find("login") != std::string::npos) {
-                client->login();
-                continue;
-            }
-            if (line.find("send") != std::string::npos) {
-                client->msg_send();
-                continue;
-            }
-            if (line.find("exit") != std::string::npos) {
-                client->exit();
-                return;
-            }
-        }
-    }
-}
-
 std::string get_nick_name()
 {
     std::cout << "Enter your nickname:" << std::endl;
