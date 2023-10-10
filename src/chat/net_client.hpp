@@ -20,6 +20,46 @@ namespace chat {
         IServerHandle& m_server_handle;
         std::ostream& m_logger;
 
+        void jFormatRead(const boost::json::value& json)
+        {
+            if (json.is_object()) {
+                boost::json::object json_obj = json.as_object();
+                if (json_obj.contains("echo")) {
+                    m_logger << "CALL ECHO FROM CLIENT" << std::endl;
+                    msg_recv("SERVER", "SERVER RESPONSE");
+                }
+
+                if (auto nick_ptr =  json_obj.if_contains("new_user")) {
+                    if (auto nick = nick_ptr->if_string()) {
+                        if (auto hash_ptr = json_obj.if_contains("hash")) {
+                            if (auto hash = hash_ptr->if_uint64()) {
+                                m_logger << "NEW USER: " << *nick << std::endl;
+                                m_server_handle.new_user(*nick, *hash);
+                            }
+                        }
+                    } 
+                }
+
+                if (auto login_ptr = json_obj.if_contains("login")) {
+                    if (auto nick = login_ptr->if_string()) {
+                        if (auto hash_ptr = json_obj.if_contains("hash")) {
+                            if (auto hash = hash_ptr->if_uint64()) {
+                                m_logger << "USER" << *nick << "LOGIN" << std::endl;
+                                m_server_handle.login(*nick, *hash);
+                            }
+                        }
+                    }
+                }
+
+                if (auto login_ptr = json_obj.if_contains("exit")) {
+                    if (auto nick = login_ptr->if_string()) {
+                        m_logger << "USER EXIT" << std::endl;
+                        m_server_handle.exit();
+                    }
+                }
+            }
+        }
+
         void do_write(boost::asio::yield_context yield)
         {
             auto self(shared_from_this());
@@ -77,31 +117,34 @@ namespace chat {
                     try
                     {
                         char data[128];
+                        std::size_t offset = 0;
+                        std::size_t size = 0;
+                        boost::json::stream_parser sp;
+                        boost::json::error_code ec;
                         for (;;) {
-                            std::size_t n = m_socket.async_read_some(boost::asio::buffer(data), yield);
-                            boost::json::stream_parser sp;
-                            boost::json::error_code ec;
                             sp.reset();
                             do {
-                                sp.write(data, ec);
+                                if (offset == size) {
+                                    size = m_socket.async_read_some(boost::asio::buffer(data), yield);
+                                    offset = 0;
+                                }
+                                offset += sp.write_some(&data[offset], size - offset, ec);
                                 if (ec) {
-                                    std::cout << ec.what() << std::endl;
+                                    m_logger << "GO_FUNCTION: " << ec.what() << "CLIENT DISCINNECTED" << std::endl;
+                                    m_socket.close();
+                                    return;
                                 }
                             } while ( ! sp.done() );
-                            boost::json::value j_format = sp.release();
-                            m_logger << "INPUT JSON" << std::endl;
+                            boost::json::value json = sp.release();
+                            m_logger << "NET ACCEPT: " << json << std::endl;
                             //вызовы server_handle
-                            if (j_format.is_object()) {
-                                boost::json::object json_obj = j_format.as_object();
-                                if (auto it = json_obj.find("echo"); it != json_obj.end()) {
-                                    msg_recv("SERVER", "SERVER RESPONSE");
-                                }
-                            }
+                            jFormatRead(json);
                         }
                     }
                     catch (std::exception& e)
                     {
                         m_socket.close();
+                        m_logger << "CLIENT DISCONNECTED" << std::endl;
                     }
                 },
                 boost::asio::detached

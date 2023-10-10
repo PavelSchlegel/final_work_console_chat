@@ -3,9 +3,15 @@
 #include <iostream>
 #include <chat/server.hpp>
 #include <fstream>
+#include <sys/utsname.h>
 
 int main (int argc, char* argv[])
 {
+    struct utsname utsname;
+    uname(&utsname);
+    std::cout << "OS: " << utsname.sysname << std::endl;
+    std::cout << "Host: " << utsname.nodename << std::endl;
+    std::cout << "Server start..." << std::endl;
     std::fstream logger("log_server.txt", std::ios::out);
     using boost::asio::ip::tcp;
     chat::Server server(logger);

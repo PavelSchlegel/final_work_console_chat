@@ -22,6 +22,7 @@ NetServer::~NetServer()
     if (m_run.joinable()) {
         m_run.join();
     }
+    disconnect();
 }
 
 void NetServer::go(boost::asio::yield_context yield)
@@ -34,16 +35,24 @@ void NetServer::go(boost::asio::yield_context yield)
             try
             {
                 char data[128];
+                std::size_t offset = 0;
+                std::size_t size = 0;
+                boost::json::stream_parser sp;
+                boost::json::error_code ec;
                 for (;;) {
-                    boost::json::stream_parser sp;
-                    boost::json::error_code ec;
                     sp.reset();
                     do {
-                        std::size_t n = socket.async_read_some(boost::asio::buffer(data), yield);
-                        sp.write_some(data, n, ec);
-                        if (ec) {
-                            std::cout << ec.what() << std::endl;
+                        if (offset == size) {
+                            size = socket.async_read_some(boost::asio::buffer(data), yield);
+                            offset = 0;
                         }
+                        offset += sp.write_some(&data[offset], size - offset, ec);
+                        if (ec) {
+                            m_logger << "GO_FUNCTION: " << ec.what() << "SESSION CLOSE" << std::endl;
+                            socket.close();
+                            return;
+                        }
+
                     } while ( ! sp.done() );
                     boost::json::value j_format = sp.release();
                     m_logger << "INPUT JSON" << std::endl;
@@ -80,6 +89,7 @@ void NetServer::server_write(boost::json::value& msg)
         std::string_view chunk = sr.read(buf);
         boost::asio::write(socket, boost::asio::buffer(chunk.data(), chunk.size()));
     } while ( ! sr.done());
+    m_logger << msg << std::endl;
 }
 
 IServerHandle& NetServer::connect(IClient& client)
@@ -109,7 +119,7 @@ IServerHandle& NetServer::connect(IClient& client)
 
 void NetServer::disconnect(IClient& client)
 {
-
+    socket.close();
 }
 
 void NetServer::msg_accept(const std::string& msg)
@@ -117,14 +127,16 @@ void NetServer::msg_accept(const std::string& msg)
     // creat json ->serialis -> socket
 }
 
-void NetServer::new_user(const std::string& nick_name, std::size_t hash)
+void NetServer::new_user(std::string_view nick_name, std::size_t hash)
 {
-
+    value j_format {{"new_user", nick_name}, {"hash", hash}};
+    server_write(j_format);
 }
 
-void NetServer::login(const std::string& nick_name, std::size_t hash)
+void NetServer::login(std::string_view nick_name, std::size_t hash)
 {
-
+    value j_format {{"login", nick_name}, {"hash", hash}};
+    server_write(j_format);
 }
 
 void NetServer::exit()
@@ -134,7 +146,7 @@ void NetServer::exit()
 
 void NetServer::disconnect()
 {
-
+    socket.close();
 }
 
 void NetServer::echo()

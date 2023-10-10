@@ -32,7 +32,7 @@ void ServerHandle::msg_accept(const std::string& msg)
     }
 }
 
-void ServerHandle::new_user(const std::string& nick_name, std::size_t hash)
+void ServerHandle::new_user(std::string_view nick_name, std::size_t hash)
 {
     auto state = m_state;
     state->new_user(nick_name, hash);
@@ -41,7 +41,7 @@ void ServerHandle::new_user(const std::string& nick_name, std::size_t hash)
     }
 }
 
-void ServerHandle::login(const std::string& nick_name, std::size_t hash)
+void ServerHandle::login(std::string_view nick_name, std::size_t hash)
 {
     auto state = m_state;
     state->login(nick_name, hash);

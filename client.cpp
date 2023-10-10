@@ -2,9 +2,15 @@
 #include <chat/terminal_client.hpp>
 #include <chat/functions.hpp>
 #include <fstream>
+#include <sys/utsname.h>
 
 int main(int argc, char* argv[])
 {
+    struct utsname utsname;
+    uname(&utsname);
+    std::cout << "OS: " << utsname.sysname << std::endl;
+    std::cout << "Host: " << utsname.nodename << std::endl;
+    std::cout << "Clietnt start..." << std::endl;
     std::fstream logger("log_client.txt", std::ios::out);
     // if (argc != 3)
     // {
@@ -26,10 +32,9 @@ int main(int argc, char* argv[])
         std::string line;
         std::getline(std::cin, line);
         client.go(line);
-        if (line.empty()) {
-            continue;
+        if ( ! line.empty()) {
+            std::cout << line << std::endl;
         }
-        std::cout << line << std::endl;
     }
 
     return 0;

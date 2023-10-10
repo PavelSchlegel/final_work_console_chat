@@ -22,8 +22,8 @@ namespace chat {
 
     public:
         virtual void msg_accept(const std::string& msg) = 0;
-        virtual void new_user(const std::string& nick_name, std::size_t hash) = 0;
-        virtual void login(const std::string& nick_name, std::size_t hash) = 0;
+        virtual void new_user(std::string_view nick_name, std::size_t hash) = 0;
+        virtual void login(std::string_view nick_name, std::size_t hash) = 0;
         virtual void exit() = 0;
         virtual void disconnect() = 0;
         void set_context(chat::ServerHandle* context)
@@ -36,8 +36,8 @@ namespace chat {
     {
     public:
         void msg_accept(const std::string& msg) override {}
-        void new_user(const std::string& nick_name, std::size_t hash) override;
-        void login(const std::string& nick_name, std::size_t hash) override;
+        void new_user(std::string_view nick_name, std::size_t hash) override;
+        void login(std::string_view nick_name, std::size_t hash) override;
         void exit() override {}
         void disconnect() override;
         void echo() override {};
@@ -47,15 +47,15 @@ namespace chat {
     {
         std::string m_my_name;
     public:
-        explicit LoginedClient(std::string name) noexcept
-        : m_my_name(std::move(name))
+        explicit LoginedClient(std::string_view name)
+        : m_my_name(name.begin(), name.end())
         {
 
         }
 
         void msg_accept(const std::string& msg) override;
-        void new_user(const std::string& nick_name, std::size_t hash) override {}
-        void login(const std::string& nick_name, std::size_t hash) override {}
+        void new_user(std::string_view nick_name, std::size_t hash) override {}
+        void login(std::string_view nick_name, std::size_t hash) override {}
         void exit() override
         {
             m_context->set_state(new UnloginedClient);

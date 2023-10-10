@@ -42,28 +42,27 @@ void chat::TerminalClient::exit()
     m_server_handle.exit();
 }
 
-void chat::TerminalClient::go(std::string& method)
+void chat::TerminalClient::go(std::string& command)
 {
-    if (std::isdigit(method[0])) {
-        int pos = std::stoi(method);
+    if (std::isdigit(command[0])) {
+        int pos = std::stoi(command);
         if (pos > methods.size()) {
             return;
         }
         (*this.*(methods[pos].second))();
-        methods.clear();
+        command.clear();
         return;
     }
 
     for (int i = 0; i < methods.size(); ++i) {
-        if (methods[i].first == method) {
-            // std::cout << "I have " << method << std::endl;
+        if (methods[i].first == command) {
             (*this.*(methods[i].second))();
-            method.clear();
+            command.clear();
             return;
         }
     }
-    method.clear();
-    method = "UNKNOW COMMAND";
+    command.clear();
+    command = "UNKNOW COMMAND";
 }
 
 void chat::TerminalClient::msg_recv(const std::string& who, const std::string& msg)

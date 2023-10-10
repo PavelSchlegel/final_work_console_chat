@@ -30,8 +30,10 @@ std::size_t get_user_password()
                         std::size_t hash = std::hash<std::string>{}(pass);
                         return hash;
                     }
+                    std::cout << "invalid pass: try again" << std::endl;
                     pass.clear();
         }
+        std::cout << "invalid pass: try again" << std::endl;
         pass.clear();
     }
 }

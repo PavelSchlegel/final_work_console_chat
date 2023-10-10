@@ -30,8 +30,8 @@ namespace chat {
         void disconnect(IClient& client) override;
 
         void msg_accept(const std::string& msg) override;
-        void new_user(const std::string& nick_name, std::size_t hash) override;
-        void login(const std::string& nick_name, std::size_t hash) override;
+        void new_user(std::string_view nick_name, std::size_t hash) override;
+        void login(std::string_view nick_name, std::size_t hash) override;
         void exit() override;
         void disconnect() override;
         void echo() override;

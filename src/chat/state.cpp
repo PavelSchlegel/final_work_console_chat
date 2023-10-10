@@ -8,7 +8,7 @@ void UnloginedClient::disconnect()
     get_server().m_clients.erase(&get_client());
 }
 
-void UnloginedClient::new_user(const std::string& nick_name, std::size_t hash)
+void UnloginedClient::new_user(std::string_view nick_name, std::size_t hash)
 {
     for (auto& rec: get_server().m_users) {
         if (rec.m_userName == nick_name) {
@@ -16,7 +16,7 @@ void UnloginedClient::new_user(const std::string& nick_name, std::size_t hash)
             return;
         }
     }
-    get_server().m_users.emplace_back(UserHash{nick_name, hash});
+    get_server().m_users.emplace_back(UserHash{{nick_name.begin(), nick_name.end()}, hash});
     m_context->set_state(new LoginedClient(nick_name));
 }
 
