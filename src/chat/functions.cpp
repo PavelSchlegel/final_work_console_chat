@@ -22,7 +22,7 @@ std::size_t get_user_password()
 {
     std::cout << "Enter your password:" << std::endl;
     std::string pass;
-    while (1) {
+    while (true) {
         std::getline(std::cin, pass);
         if (pass.size() >= 8) {
             Optional_card card = std::for_each(pass.begin(), pass.end(), Optional_card());

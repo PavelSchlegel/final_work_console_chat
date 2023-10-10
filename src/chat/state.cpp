@@ -5,11 +5,7 @@ using namespace chat;
 
 void UnloginedClient::disconnect()
 {
-    for (auto it = get_server().m_clients.begin(); it != get_server().m_clients.end(); ++it) {
-        if (it->first == &get_client()) {
-            get_server().m_clients.erase(it);
-        }
-    }
+    get_server().m_clients.erase(&get_client());
 }
 
 void UnloginedClient::new_user(const std::string& nick_name, std::size_t hash)

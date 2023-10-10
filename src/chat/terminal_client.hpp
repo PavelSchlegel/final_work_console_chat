@@ -20,14 +20,14 @@ namespace chat {
         void login();
         void echo();
         void exit();
+        void info();
 
     public:
 
-        TerminalClient(chat::IServer* server = nullptr);
+        TerminalClient(chat::IServer* server);
         ~TerminalClient();
 
         void msg_recv(const std::string& who, const std::string& msg) override;
-        void go(const std::string& method);
-        void info();
+        void go(std::string& method);
     };
 } // namespace chat

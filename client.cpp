@@ -22,11 +22,14 @@ int main(int argc, char* argv[])
 
     std::cout << "Welcom to console chat!" << std::endl;
     std::cout << "Enter your command or info to see methods:" << std::endl;
-    while (1) {
+    while (true) {
         std::string line;
         std::getline(std::cin, line);
         client.go(line);
-        line.clear();
+        if (line.empty()) {
+            continue;
+        }
+        std::cout << line << std::endl;
     }
 
     return 0;

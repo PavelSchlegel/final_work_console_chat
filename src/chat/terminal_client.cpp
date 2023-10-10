@@ -3,6 +3,7 @@
 chat::TerminalClient::TerminalClient(chat::IServer* server)
 : m_server_handle(server->connect(*this))
 {
+    
     methods.push_back(std::make_pair("msg_send", &TerminalClient::msg_send));
     methods.push_back(std::make_pair("new_user", &TerminalClient::new_user));
     methods.push_back(std::make_pair("login", &TerminalClient::login));
@@ -41,7 +42,7 @@ void chat::TerminalClient::exit()
     m_server_handle.exit();
 }
 
-void chat::TerminalClient::go(const std::string& method)
+void chat::TerminalClient::go(std::string& method)
 {
     if (std::isdigit(method[0])) {
         int pos = std::stoi(method);
@@ -49,6 +50,7 @@ void chat::TerminalClient::go(const std::string& method)
             return;
         }
         (*this.*(methods[pos].second))();
+        methods.clear();
         return;
     }
 
@@ -56,9 +58,12 @@ void chat::TerminalClient::go(const std::string& method)
         if (methods[i].first == method) {
             // std::cout << "I have " << method << std::endl;
             (*this.*(methods[i].second))();
+            method.clear();
             return;
         }
     }
+    method.clear();
+    method = "UNKNOW COMMAND";
 }
 
 void chat::TerminalClient::msg_recv(const std::string& who, const std::string& msg)

@@ -10,15 +10,16 @@ int main (int argc, char* argv[])
     using boost::asio::ip::tcp;
     chat::Server server(logger);
     try {
-        if (argc != 2)
-        {
-            std::cerr << "Usage: chat_server <port>\n";
-            /*
-            example
-            port: 2020
-            */
-            return 1;
-        }
+        const char* port = "2020";
+        // if (argc != 2)
+        // {
+        //     std::cerr << "Usage: chat_server <port>\n";
+        //     /*
+        //     example
+        //     port: 2020
+        //     */
+        //     return 1;
+        // }
 
         boost::asio::io_context io_context;
 
@@ -26,7 +27,7 @@ int main (int argc, char* argv[])
             io_context,
             [&](boost::asio::yield_context yield)
             {
-                tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), std::atoi(argv[1])));
+                tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), std::atoi(port)));
 
                 for (;;) {
                     boost::system::error_code ec;
