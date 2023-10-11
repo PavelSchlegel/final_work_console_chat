@@ -27,9 +27,9 @@ namespace chat {
         NetServer(std::string_view host, std::string_view port, std::ostream& logger);
         ~NetServer();
         IServerHandle& connect(IClient& client) override;
-        void disconnect(IClient& client) override;
+        void disconnect(IClient& client) override {}
 
-        void msg_accept(const std::string& msg) override;
+        void msg_accept(std::string_view msg) override;
         void new_user(std::string_view nick_name, std::size_t hash) override;
         void login(std::string_view nick_name, std::size_t hash) override;
         void exit() override;

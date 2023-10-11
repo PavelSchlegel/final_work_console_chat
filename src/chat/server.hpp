@@ -36,6 +36,7 @@ namespace chat {
                 std::forward_as_tuple(&client),
                 std::forward_as_tuple(*this, client, m_logger)
             );
+            m_logger << "SERVER: NEW_CONNECT:" << std::endl;
             return it->second;
         }
 
@@ -43,6 +44,7 @@ namespace chat {
         {
             if (auto rec = m_clients.find(&client); rec != m_clients.end()) {
                 m_clients.erase(rec);
+                m_logger << "SERVER: CLIENT_DISCONNECTED:" << std::endl;
             }
         }
 

@@ -1,6 +1,7 @@
 #ifndef STATE
 #define STATE
 #include "serverhandle.hpp"
+#include <fstream>
 
 namespace chat {
     class LoginedClient;
@@ -21,7 +22,7 @@ namespace chat {
         }
 
     public:
-        virtual void msg_accept(const std::string& msg) = 0;
+        virtual void msg_accept(std::string_view msg) = 0;
         virtual void new_user(std::string_view nick_name, std::size_t hash) = 0;
         virtual void login(std::string_view nick_name, std::size_t hash) = 0;
         virtual void exit() = 0;
@@ -34,35 +35,40 @@ namespace chat {
 
     class UnloginedClient: public IState
     {
+        std::ostream& m_logger;
     public:
-        void msg_accept(const std::string& msg) override {}
+        UnloginedClient(std::ostream& logger)
+        :m_logger(logger)
+        {
+
+        }
+        void msg_accept(std::string_view msg) override;
         void new_user(std::string_view nick_name, std::size_t hash) override;
         void login(std::string_view nick_name, std::size_t hash) override;
         void exit() override {}
         void disconnect() override;
-        void echo() override {};
+        void echo() override;
     };
 
     class LoginedClient: public IState
     {
+        std::ostream& m_logger;
         std::string m_my_name;
     public:
-        explicit LoginedClient(std::string_view name)
-        : m_my_name(name.begin(), name.end())
+        explicit LoginedClient(std::string_view name, std::ostream& logger)
+        : m_logger(logger)
+        , m_my_name(name.begin(), name.end())
         {
-
+            // m_context->set_activ_true();
         }
 
-        void msg_accept(const std::string& msg) override;
+        void msg_accept(std::string_view msg) override;
         void new_user(std::string_view nick_name, std::size_t hash) override {}
         void login(std::string_view nick_name, std::size_t hash) override {}
-        void exit() override
-        {
-            m_context->set_state(new UnloginedClient);
-        }
+        void exit() override;
 
         void disconnect() override;
-        void echo() override {};
+        void echo() override;
     };
 } // namespace chat
 #endif //STATE

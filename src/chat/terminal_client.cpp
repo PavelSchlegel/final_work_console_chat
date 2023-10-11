@@ -1,15 +1,16 @@
 #include "functions.hpp"
 
-chat::TerminalClient::TerminalClient(chat::IServer* server)
+chat::TerminalClient::TerminalClient(chat::IServer* server, std::ostream& logger)
 : m_server_handle(server->connect(*this))
+, m_logger(logger)
 {
-    
     methods.push_back(std::make_pair("msg_send", &TerminalClient::msg_send));
     methods.push_back(std::make_pair("new_user", &TerminalClient::new_user));
     methods.push_back(std::make_pair("login", &TerminalClient::login));
     methods.push_back(std::make_pair("echo", &TerminalClient::echo));
     methods.push_back(std::make_pair("exit", &TerminalClient::exit));
     methods.push_back(std::make_pair("info", &TerminalClient::info));
+    methods.push_back(std::make_pair("close", &TerminalClient::close));
 }
 
 chat::TerminalClient::~TerminalClient()
@@ -42,6 +43,12 @@ void chat::TerminalClient::exit()
     m_server_handle.exit();
 }
 
+void chat::TerminalClient::close()
+{
+    m_server_handle.disconnect();
+    throw std::runtime_error("programm close");
+}
+
 void chat::TerminalClient::go(std::string& command)
 {
     if (std::isdigit(command[0])) {
@@ -67,13 +74,13 @@ void chat::TerminalClient::go(std::string& command)
 
 void chat::TerminalClient::msg_recv(const std::string& who, const std::string& msg)
 {
-    std::cout << who << ":" << '\n';
-    std::cout << msg << std::endl;
+    std::cout << "\033[32m" <<  who << ":\033[0m" << '\n';
+    std::cout << '\t' << msg << std::endl;
 }
 
 void chat::TerminalClient::info()
 {
     for (int i = 0; i < methods.size(); ++i) {
-        std::cout << i << " " << methods[i].first << std::endl;
+        std::cout << "\033[32m" << i << "\033[0m" << " " << methods[i].first << std::endl;
     }
 }

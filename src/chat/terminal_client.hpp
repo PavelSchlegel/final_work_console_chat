@@ -14,6 +14,7 @@ namespace chat {
 
         IServerHandle& m_server_handle;
         Method_list methods;
+        std::ostream& m_logger;
 
         void msg_send();
         void new_user();
@@ -21,10 +22,11 @@ namespace chat {
         void echo();
         void exit();
         void info();
+        void close();
 
     public:
 
-        TerminalClient(chat::IServer* server);
+        TerminalClient(chat::IServer* server, std::ostream& logger);
         ~TerminalClient();
 
         void msg_recv(const std::string& who, const std::string& msg) override;

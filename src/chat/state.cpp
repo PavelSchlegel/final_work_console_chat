@@ -16,29 +16,55 @@ void UnloginedClient::new_user(std::string_view nick_name, std::size_t hash)
             return;
         }
     }
+    m_logger << "UNLOGINED_CLIENT: NEW_USER" << std::endl;
     get_server().m_users.emplace_back(UserHash{{nick_name.begin(), nick_name.end()}, hash});
-    m_context->set_state(new LoginedClient(nick_name));
+    m_context->set_state(new LoginedClient(nick_name, m_logger));
+    m_context->set_activ_true();
 }
 
-void UnloginedClient::login(const std::string& nick_name, std::size_t hash)
+void UnloginedClient::login(std::string_view nick_name, std::size_t hash)
 {
     for (auto& rec: get_server().m_users) {
         if (rec.m_userName == nick_name) {
             if (rec.m_userHash == hash) {
-                m_context->set_state(new LoginedClient(nick_name));
+                m_context->set_state(new LoginedClient(nick_name, m_logger));
                 return;
             }
         }
     } //у юзеров уникальные ники
     get_client().msg_recv("SERVER:","Invalid pass or nickname!");    
 }
-void LoginedClient::msg_accept(const std::string& msg)
+
+void UnloginedClient::msg_accept(std::string_view msg)
+{
+    get_client().msg_recv("SERVER", "CLIENT LOGIN ZERO");
+}
+
+void UnloginedClient::echo()
+{
+    get_client().msg_recv("Server", "ECHO RESPONSE");
+}
+
+void LoginedClient::msg_accept(std::string_view msg)
 {
     for (auto& rec: get_server().m_clients) {
         if (&rec.second != m_context) {
-            rec.first->msg_recv(m_my_name, msg);
+            if (rec.second.isActiv()) {
+                rec.first->msg_recv(m_my_name, {msg.begin(), msg.end()});
+            }
         }
     }
+}
+
+void LoginedClient::exit()
+{
+    for (auto& rec: get_server().m_clients) {
+        if (&rec.second != m_context) {
+            rec.first->msg_recv(m_my_name, "exit from server");
+        }
+    }
+    m_context->set_activ_false();
+    m_context->set_state(new UnloginedClient(m_logger));
 }
 
 void LoginedClient::disconnect()
@@ -48,4 +74,9 @@ void LoginedClient::disconnect()
             get_server().m_clients.erase(it);
         }
     }
+}
+
+void LoginedClient::echo()
+{
+    get_client().msg_recv("Server", "ECHO RESPONSE");
 }

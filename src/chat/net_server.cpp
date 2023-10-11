@@ -21,13 +21,14 @@ NetServer::~NetServer()
 {
     if (m_run.joinable()) {
         m_run.join();
+        m_logger << "THREAD JOIN &";
     }
-    disconnect();
+    socket.close();
+        m_logger << "SOCKET CLOSE" << std::endl;
 }
 
 void NetServer::go(boost::asio::yield_context yield)
 {
-    //read socket and call method
     boost::asio::spawn(
         io_context, 
         [this](boost::asio::yield_context yield)
@@ -55,8 +56,7 @@ void NetServer::go(boost::asio::yield_context yield)
 
                     } while ( ! sp.done() );
                     boost::json::value j_format = sp.release();
-                    m_logger << "INPUT JSON" << std::endl;
-                    //вызовы server_handle
+                    m_logger << "NETWORK RECEPTION :" << j_format << std::endl;
                     if (j_format.is_object()) {
                         boost::json::object json_obj = j_format.as_object();
                         auto who = json_obj.find("who");
@@ -73,6 +73,7 @@ void NetServer::go(boost::asio::yield_context yield)
             }
             catch (std::exception& e)
             {
+                m_logger << "NET_SERVER_GO: " << e.what() << std::endl;
                 socket.close();
             }
         },
@@ -89,7 +90,7 @@ void NetServer::server_write(boost::json::value& msg)
         std::string_view chunk = sr.read(buf);
         boost::asio::write(socket, boost::asio::buffer(chunk.data(), chunk.size()));
     } while ( ! sr.done());
-    m_logger << msg << std::endl;
+    m_logger <<"SOCKET_WRITE" << msg << std::endl;
 }
 
 IServerHandle& NetServer::connect(IClient& client)
@@ -117,40 +118,42 @@ IServerHandle& NetServer::connect(IClient& client)
     return *this;
 }
 
-void NetServer::disconnect(IClient& client)
+void NetServer::msg_accept(std::string_view msg)
 {
-    socket.close();
-}
-
-void NetServer::msg_accept(const std::string& msg)
-{
-    // creat json ->serialis -> socket
+    value j_format {{"message", msg}};
+    m_logger << "MSG_ACCEPT" << std::endl;
+    server_write(j_format);
 }
 
 void NetServer::new_user(std::string_view nick_name, std::size_t hash)
 {
     value j_format {{"new_user", nick_name}, {"hash", hash}};
+    m_logger << "SENT_TO_SERVER: NEW USER" << std::endl;
     server_write(j_format);
 }
 
 void NetServer::login(std::string_view nick_name, std::size_t hash)
 {
     value j_format {{"login", nick_name}, {"hash", hash}};
+    m_logger << "SENT_TO_SERVER: LOGIN" << std::endl;
     server_write(j_format);
 }
 
 void NetServer::exit()
 {
-
+    value j_format {{"exit", "client exiting"}};
+    m_logger << "SENT_TO_SERVER: EXIT" << std::endl;
+    server_write(j_format);
 }
 
 void NetServer::disconnect()
 {
-    socket.close();
+    this->exit();
 }
 
 void NetServer::echo()
 {
     value j_format {{"echo", "TEST FROM CLIENT"}};
+    m_logger << "SENT_TO_SERVER: ECHO" << std::endl;
     server_write(j_format);
 }

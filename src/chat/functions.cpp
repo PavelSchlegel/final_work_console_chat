@@ -2,6 +2,20 @@
 #include <iostream>
 #include <boost/lexical_cast.hpp>
 #include "./optional_card/optional_card.hpp"
+#include <sys/utsname.h>
+
+void star_print()
+{
+    std::cout << "*****************" << std::endl;
+}
+
+void start()
+{
+    struct utsname utsname;
+    uname(&utsname);
+    std::cout << "OS: " << utsname.sysname << std::endl;
+    std::cout << "Host: " << utsname.nodename << std::endl;
+}
 
 std::string get_nick_name()
 {

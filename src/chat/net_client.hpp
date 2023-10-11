@@ -25,16 +25,20 @@ namespace chat {
             if (json.is_object()) {
                 boost::json::object json_obj = json.as_object();
                 if (json_obj.contains("echo")) {
-                    m_logger << "CALL ECHO FROM CLIENT" << std::endl;
-                    msg_recv("SERVER", "SERVER RESPONSE");
+                    std::cout << "Logg write..." << std::endl;
+                    m_logger << "JSON_READ: CALL ECHO FROM CLIENT" << std::endl;
+                    m_server_handle.echo();
+                    return;
                 }
 
                 if (auto nick_ptr =  json_obj.if_contains("new_user")) {
                     if (auto nick = nick_ptr->if_string()) {
                         if (auto hash_ptr = json_obj.if_contains("hash")) {
                             if (auto hash = hash_ptr->if_uint64()) {
-                                m_logger << "NEW USER: " << *nick << std::endl;
+                                std::cout << "Logg write..." << std::endl;
+                                m_logger << "JSON_READ: NEW USER: " << *nick << std::endl;
                                 m_server_handle.new_user(*nick, *hash);
+                                return;
                             }
                         }
                     } 
@@ -44,17 +48,28 @@ namespace chat {
                     if (auto nick = login_ptr->if_string()) {
                         if (auto hash_ptr = json_obj.if_contains("hash")) {
                             if (auto hash = hash_ptr->if_uint64()) {
-                                m_logger << "USER" << *nick << "LOGIN" << std::endl;
+                                std::cout << "Logg write..." << std::endl;
+                                m_logger << "JSON_READ: USER" << *nick << "LOGIN" << std::endl;
                                 m_server_handle.login(*nick, *hash);
+                                return;
                             }
                         }
                     }
                 }
 
                 if (auto login_ptr = json_obj.if_contains("exit")) {
-                    if (auto nick = login_ptr->if_string()) {
-                        m_logger << "USER EXIT" << std::endl;
+                        std::cout << "Logg write..." << std::endl;
+                        m_logger << "JSON_READ: USER EXIT" << std::endl;
                         m_server_handle.exit();
+                        return;
+                }
+
+                if (auto msg_ptr = json_obj.if_contains("message")) {
+                    if (auto msg = msg_ptr->if_string()) {
+                        std::cout << "Logg write..." << std::endl;
+                        m_logger << "JSON_READ: MESSAGE IN" << std::endl;
+                        m_server_handle.msg_accept(*msg);
+                        return;
                     }
                 }
             }
@@ -79,6 +94,7 @@ namespace chat {
                         m_socket.close();
                     }
                 } while( ! sr.done() );
+                std::cout << "Logg write..." << std::endl;
                 m_logger << "MSG_TO_CLIENT_RESPONSED" << std::endl;
                 msg_scud.pop();
             }
@@ -130,19 +146,22 @@ namespace chat {
                                 }
                                 offset += sp.write_some(&data[offset], size - offset, ec);
                                 if (ec) {
+                                    std::cout << "Logg write...ERROR: ASYNC_GO" << std::endl;
                                     m_logger << "GO_FUNCTION: " << ec.what() << "CLIENT DISCINNECTED" << std::endl;
                                     m_socket.close();
                                     return;
                                 }
                             } while ( ! sp.done() );
                             boost::json::value json = sp.release();
-                            m_logger << "NET ACCEPT: " << json << std::endl;
+                            std::cout << "Logg write..." << std::endl;
+                            m_logger << "NET_ACCEPT: " << json << std::endl;
                             //вызовы server_handle
                             jFormatRead(json);
                         }
                     }
                     catch (std::exception& e)
                     {
+                         std::cout << "Logg write...ERROR: ASYNC_GO_CATCH" << std::endl;
                         m_socket.close();
                         m_logger << "CLIENT DISCONNECTED" << std::endl;
                     }

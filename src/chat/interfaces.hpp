@@ -15,7 +15,7 @@ namespace chat {
     {
     public:
         virtual ~IServerHandle() noexcept {}
-        virtual void msg_accept(const std::string& msg) = 0;
+        virtual void msg_accept(std::string_view msg) = 0;
         virtual void new_user(std::string_view nick_name, std::size_t hash) = 0;
         virtual void login(std::string_view nick_name, std::size_t hash) = 0;
         virtual void exit() = 0;

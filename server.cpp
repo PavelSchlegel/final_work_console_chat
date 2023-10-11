@@ -11,7 +11,7 @@ int main (int argc, char* argv[])
     uname(&utsname);
     std::cout << "OS: " << utsname.sysname << std::endl;
     std::cout << "Host: " << utsname.nodename << std::endl;
-    std::cout << "Server start..." << std::endl;
+    std::cout << "\033[32mServer start...\033[0m" << std::endl;
     std::fstream logger("log_server.txt", std::ios::out);
     using boost::asio::ip::tcp;
     chat::Server server(logger);
@@ -39,7 +39,7 @@ int main (int argc, char* argv[])
                     boost::system::error_code ec;
                     tcp::socket socket(io_context);
                     acceptor.async_accept(socket, yield[ec]);
-                    logger << "NEW_CONNECT" << std::endl;
+                    logger << "NEW_SOCKET" << std::endl;
                     if (!ec)
                     {
                         std::make_shared<chat::NetClient>(server, std::move(socket), logger)->go(io_context);
