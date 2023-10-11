@@ -34,11 +34,13 @@ namespace chat {
                 if (auto nick_ptr =  json_obj.if_contains("new_user")) {
                     if (auto nick = nick_ptr->if_string()) {
                         if (auto hash_ptr = json_obj.if_contains("hash")) {
-                            if (auto hash = hash_ptr->if_uint64()) {
+                            if (hash_ptr->is_number()) {
                                 std::cout << "Logg write..." << std::endl;
                                 m_logger << "JSON_READ: NEW USER: " << *nick << std::endl;
-                                m_server_handle.new_user(*nick, *hash);
+                                m_server_handle.new_user(*nick, hash_ptr->to_number<std::size_t>());
                                 return;
+                            } else {
+                                m_logger << "HASH_IS_NOT_64T " << hash_ptr->kind() << std::endl;
                             }
                         }
                     } 
@@ -47,10 +49,10 @@ namespace chat {
                 if (auto login_ptr = json_obj.if_contains("login")) {
                     if (auto nick = login_ptr->if_string()) {
                         if (auto hash_ptr = json_obj.if_contains("hash")) {
-                            if (auto hash = hash_ptr->if_uint64()) {
+                            if (hash_ptr->is_number()) {
                                 std::cout << "Logg write..." << std::endl;
                                 m_logger << "JSON_READ: USER" << *nick << "LOGIN" << std::endl;
-                                m_server_handle.login(*nick, *hash);
+                                m_server_handle.login(*nick, hash_ptr->to_number<std::size_t>());
                                 return;
                             }
                         }
@@ -71,6 +73,13 @@ namespace chat {
                         m_server_handle.msg_accept(*msg);
                         return;
                     }
+                }
+
+                if (auto login_ptr = json_obj.if_contains("disconnect")) {
+                    std::cout << "Logg write..." << std::endl;
+                    m_logger << "JSON_READ: CLIENT_DISCONNECT" <<  std::endl;
+                    m_socket.close();
+                    return;
                 }
             }
         }
@@ -155,13 +164,12 @@ namespace chat {
                             boost::json::value json = sp.release();
                             std::cout << "Logg write..." << std::endl;
                             m_logger << "NET_ACCEPT: " << json << std::endl;
-                            //вызовы server_handle
                             jFormatRead(json);
                         }
                     }
                     catch (std::exception& e)
                     {
-                         std::cout << "Logg write...ERROR: ASYNC_GO_CATCH" << std::endl;
+                        std::cout << "Logg write...ERROR: ASYNC_GO_CATCH" << std::endl;
                         m_socket.close();
                         m_logger << "CLIENT DISCONNECTED" << std::endl;
                     }

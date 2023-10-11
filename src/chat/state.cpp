@@ -3,11 +3,6 @@
 
 using namespace chat;
 
-void UnloginedClient::disconnect()
-{
-    get_server().m_clients.erase(&get_client());
-}
-
 void UnloginedClient::new_user(std::string_view nick_name, std::size_t hash)
 {
     for (auto& rec: get_server().m_users) {
@@ -21,6 +16,7 @@ void UnloginedClient::new_user(std::string_view nick_name, std::size_t hash)
     get_server().m_users.emplace_back(UserHash{{nick_name.begin(), nick_name.end()}, hash});
     m_context->set_state(new LoginedClient(nick_name, m_logger));
     m_context->set_activ_true();
+    get_server().db_save();
 }
 
 void UnloginedClient::login(std::string_view nick_name, std::size_t hash)
@@ -33,7 +29,7 @@ void UnloginedClient::login(std::string_view nick_name, std::size_t hash)
                 return;
             }
         }
-    } //у юзеров уникальные ники
+    }
     get_client().msg_recv("SERVER:","Invalid pass or nickname!");    
 }
 
@@ -75,6 +71,19 @@ void LoginedClient::disconnect()
     for (auto it = get_server().m_clients.begin(); it != get_server().m_clients.end(); ++it) {
         if (it->first == &get_client()) {
             get_server().m_clients.erase(it);
+            m_logger << "SERVER: ERASE CLIENT_SERVER_HANDLE_LOGIN" << std::endl;
+            break;
+        }
+    }
+}
+
+void UnloginedClient::disconnect()
+{
+    for (auto it = get_server().m_clients.begin(); it != get_server().m_clients.end(); ++it) {
+        if (it->first == &get_client()) {
+            get_server().m_clients.erase(it);
+            m_logger << "SERVER: ERASE CLIENT_SERVER_HANDLE_UNLOGIN" << std::endl;
+            break;
         }
     }
 }

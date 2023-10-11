@@ -14,7 +14,9 @@ NetServer::NetServer(std::string_view host, std::string_view port, std::ostream&
 : m_logger(logger)
 {
     tcp::resolver resolver(io_context);
+    boost::asio::socket_base::keep_alive option(true);
     boost::asio::connect(socket, resolver.resolve(host, port));
+    socket.set_option(option);
 }
 
 NetServer::~NetServer()
@@ -148,7 +150,9 @@ void NetServer::exit()
 
 void NetServer::disconnect()
 {
-    this->exit();
+    value j_format {{"disconnect", "client close"}};
+    m_logger << "SENT_TO_SERVER: EXIT" << std::endl;
+    server_write(j_format);
 }
 
 void NetServer::echo()

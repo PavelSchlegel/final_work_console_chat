@@ -66,7 +66,12 @@ void ServerHandle::exit()
 
 void ServerHandle::disconnect()
 {
-    m_state->disconnect();
+    m_logger << "SERVER_HANDLE: ";
+    auto state = m_state;
+    state->disconnect();
+    if (state != m_state) {
+        delete state;
+    }
 }
 
 void ServerHandle::echo()

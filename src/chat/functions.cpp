@@ -57,7 +57,7 @@ std::size_t get_user_password()
 std::string get_msg()
 {
     std::string msg;
-    std::cout << COLOR_GRUN  << "Your message:" << COLOR_RESET << '\n' << '\t';
+    std::cout << COLOR_GRUN  << "Your:" << COLOR_RESET << '\n' << '\t';
     std::getline(std::cin, msg);
     return msg;
 }

@@ -1,10 +1,12 @@
 #ifndef SERVER
 #define SERVER
 
+#include <boost/json.hpp>
 #include "interfaces.hpp"
 #include "serverhandle.hpp"
 #include <map>
 #include <vector>
+#include <fstream>
 
 namespace chat {
   
@@ -27,7 +29,28 @@ namespace chat {
         Server (std::ostream& logger)
         : m_logger(logger)
         {
+            std::fstream fs("m_users_save.txt", std::ios::in);
+            if (fs.is_open()) {
+                auto db = boost::json::parse(fs).as_array();
+                for (const auto& value : db) {
+                    auto user = value.as_object();
+                    m_users.emplace_back(UserHash{user["nick"].as_string().c_str(), user["hash"].to_number<std::size_t>()});
+                }
+            }
+        }
 
+        ~Server()
+        {
+            db_save();
+        }
+
+        void db_save()
+        {
+            boost::json::array db;
+            for (const auto& user : m_users) {
+                db.emplace_back(boost::json::object{{"nick", user.m_userName}, {"hash", user.m_userHash}});
+            }
+            std::fstream("m_users_save.txt", std::ios::out) << boost::json::serialize(db);
         }
 
         IServerHandle& connect(IClient& client) override
