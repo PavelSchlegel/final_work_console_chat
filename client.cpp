@@ -4,13 +4,9 @@
 #include <fstream>
 #include <./main_arg/main_arg.hpp>
 
-#define COLOR_RED "\033[1;31m"
-#define COLOR_GRUN "\033[32m"
-#define COLOR_RESET "\033[0m"
-
-
 int main(int argc, char* argv[])
 {
+    star_print();
     start();
     std::fstream logger("log_client.txt", std::ios::out);
     MainArg args(argc, argv);

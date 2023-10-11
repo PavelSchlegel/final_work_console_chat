@@ -26,7 +26,7 @@ public:
 
     std::string& operator[] (const int index)
     {
-        assert(index < arg.size() && "CLASS:MAIN_ARG: OPERATOR[]->ERROR_INDEX");
+        assert(index < arg.size() && index >= 0 && "CLASS:MAIN_ARG: OPERATOR[]->ERROR_INDEX");
         return arg[index];
     }
 };

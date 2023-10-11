@@ -16,6 +16,7 @@ void UnloginedClient::new_user(std::string_view nick_name, std::size_t hash)
             return;
         }
     }
+    get_client().msg_recv("SERVER:", "Welcome!");
     m_logger << "UNLOGINED_CLIENT: NEW_USER" << std::endl;
     get_server().m_users.emplace_back(UserHash{{nick_name.begin(), nick_name.end()}, hash});
     m_context->set_state(new LoginedClient(nick_name, m_logger));
@@ -28,6 +29,7 @@ void UnloginedClient::login(std::string_view nick_name, std::size_t hash)
         if (rec.m_userName == nick_name) {
             if (rec.m_userHash == hash) {
                 m_context->set_state(new LoginedClient(nick_name, m_logger));
+                get_client().msg_recv("SERVER:", "Welcome!");
                 return;
             }
         }
@@ -63,6 +65,7 @@ void LoginedClient::exit()
             rec.first->msg_recv(m_my_name, "exit from server");
         }
     }
+    get_client().msg_recv("SERVER:", "See you later!");
     m_context->set_activ_false();
     m_context->set_state(new UnloginedClient(m_logger));
 }

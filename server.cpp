@@ -4,31 +4,23 @@
 #include <chat/server.hpp>
 #include <fstream>
 #include <sys/utsname.h>
+#include <chat/functions.hpp>
+
+#define COLOR_RED "\033[1;31m"
+#define COLOR_GRUN "\033[32m"
+#define COLOR_RESET "\033[0m"
 
 int main (int argc, char* argv[])
 {
-    struct utsname utsname;
-    uname(&utsname);
-    std::cout << "OS: " << utsname.sysname << std::endl;
-    std::cout << "Host: " << utsname.nodename << std::endl;
-    std::cout << "\033[32mServer start...\033[0m" << std::endl;
+    star_print();
+    start();
+    std::cout << COLOR_GRUN << "Server start..." << COLOR_RESET << std::endl;
     std::fstream logger("log_server.txt", std::ios::out);
     using boost::asio::ip::tcp;
     chat::Server server(logger);
     try {
         const char* port = "2020";
-        // if (argc != 2)
-        // {
-        //     std::cerr << "Usage: chat_server <port>\n";
-        //     /*
-        //     example
-        //     port: 2020
-        //     */
-        //     return 1;
-        // }
-
         boost::asio::io_context io_context;
-
         boost::asio::spawn(
             io_context,
             [&](boost::asio::yield_context yield)
@@ -53,9 +45,10 @@ int main (int argc, char* argv[])
                 }
             }
         );
-
         io_context.run();
+        std::cout << COLOR_GRUN << "Listing..." << COLOR_RESET << std::endl;
     } catch (std::exception& e) {
+        logger << "SERVER_SPAWN:" << e.what() << std::endl;
         std::cerr << "Exception: " << e.what() << "\n";
     }
     return 0;

@@ -19,12 +19,13 @@ void start()
 
 std::string get_nick_name()
 {
-    std::cout << "Enter your nickname:" << std::endl;
+    std::cout << COLOR_GRUN << "Enter your nickname:" << COLOR_RESET << " ";
     std::string nick;
     while (1) {
         std::getline(std::cin, nick);
         for (std::size_t i = 0; i < nick.size(); ++i) {
             if ( ! (std::isalpha(nick[i]) || nick[i] == ' ') ) {
+                std::cout << COLOR_GRUN << "invalid nick: try again" << COLOR_RESET << std::endl;
                 break;
             }
         }
@@ -34,7 +35,7 @@ std::string get_nick_name()
 
 std::size_t get_user_password()
 {
-    std::cout << "Enter your password:" << std::endl;
+    std::cout << COLOR_GRUN << "Enter your password:" << COLOR_RESET << " ";
     std::string pass;
     while (true) {
         std::getline(std::cin, pass);
@@ -44,10 +45,11 @@ std::size_t get_user_password()
                         std::size_t hash = std::hash<std::string>{}(pass);
                         return hash;
                     }
-                    std::cout << "invalid pass: try again" << std::endl;
+                    std::cout << COLOR_GRUN << "invalid pass: try again" << COLOR_RESET << std::endl;
                     pass.clear();
+                    continue;
         }
-        std::cout << "invalid pass: try again" << std::endl;
+        std::cout << COLOR_GRUN << "invalid pass: try again" << COLOR_RESET << std::endl;
         pass.clear();
     }
 }
@@ -55,7 +57,7 @@ std::size_t get_user_password()
 std::string get_msg()
 {
     std::string msg;
-    std::cout << "Your message:" << std::endl;
+    std::cout << COLOR_GRUN  << "Your message:" << COLOR_RESET << '\n' << '\t';
     std::getline(std::cin, msg);
     return msg;
 }
@@ -63,7 +65,7 @@ std::string get_msg()
 std::string get_recipient()
 {
     std::string recip;
-    std::cout << "Recipient:" << std::endl;
+    std::cout << COLOR_GRUN  << "Recipient:" << COLOR_RESET << " ";
     std::getline(std::cin, recip);
     return recip;
 }
