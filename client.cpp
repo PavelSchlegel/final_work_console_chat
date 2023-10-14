@@ -15,13 +15,13 @@ int main(int argc, char* argv[])
         chat::TerminalClient client(&server, logger);
         star_print();
         std::cout << 
-                COLOR_GRUN << "Welcom to console chat!"
-                << COLOR_RESET << std::endl;
+                colors::grun << "Welcom to console chat!"
+                << colors::reset << std::endl;
         star_print();
         std::cout << 
-                COLOR_GRUN 
+                colors::grun 
                 << "Enter your command or info to see methods:"
-                << COLOR_RESET << std::endl;
+                << colors::reset << std::endl;
         star_print();
         try {
             while (true) {
@@ -34,14 +34,14 @@ int main(int argc, char* argv[])
             }
         } catch (...) {
             logger << "PROGRAMM CLOSE" << std::endl;
-            std::cout << COLOR_GRUN << "By!" << COLOR_RESET << std::endl;
+            std::cout << colors::grun << "By!" << colors::reset << std::endl;
             exit(0);
         }
     } catch (...) {
         logger << "SERVER CONNECTION PROBLEM" << std::endl;
         std::cerr <<
-                COLOR_RED << "SERVER CONNECTION PROBLEM"
-                << COLOR_RESET << std::endl;
+                colors::red << "SERVER CONNECTION PROBLEM"
+                << colors::reset << std::endl;
         logger.close();
     }
 

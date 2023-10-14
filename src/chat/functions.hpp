@@ -2,10 +2,7 @@
 #include <iostream>
 #include <string>
 #include "terminal_client.hpp"
-
-#define COLOR_RED "\033[1;31m"
-#define COLOR_GRUN "\033[32m"
-#define COLOR_RESET "\033[0m"
+#include <chat/cout_color.hpp>
 
 void start();
 void star_print();

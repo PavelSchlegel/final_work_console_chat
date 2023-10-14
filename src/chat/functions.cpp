@@ -19,13 +19,13 @@ void start()
 
 std::string get_nick_name()
 {
-    std::cout << COLOR_GRUN << "Enter your nickname:" << COLOR_RESET << " ";
+    std::cout << colors::grun << "Enter your nickname:" << colors::reset << " ";
     std::string nick;
     while (1) {
         std::getline(std::cin, nick);
         for (std::size_t i = 0; i < nick.size(); ++i) {
             if ( ! (std::isalpha(nick[i]) || nick[i] == ' ') ) {
-                std::cout << COLOR_GRUN << "invalid nick: try again" << COLOR_RESET << std::endl;
+                std::cout << colors::grun << "invalid nick: try again" << colors::reset << std::endl;
                 break;
             }
         }
@@ -35,7 +35,7 @@ std::string get_nick_name()
 
 std::size_t get_user_password()
 {
-    std::cout << COLOR_GRUN << "Enter your password:" << COLOR_RESET << " ";
+    std::cout << colors::grun << "Enter your password:" << colors::reset << " ";
     std::string pass;
     while (true) {
         std::getline(std::cin, pass);
@@ -45,11 +45,11 @@ std::size_t get_user_password()
                         std::size_t hash = std::hash<std::string>{}(pass);
                         return hash;
                     }
-                    std::cout << COLOR_GRUN << "invalid pass: try again" << COLOR_RESET << std::endl;
+                    std::cout << colors::grun << "invalid pass: try again" << colors::reset << std::endl;
                     pass.clear();
                     continue;
         }
-        std::cout << COLOR_GRUN << "invalid pass: try again" << COLOR_RESET << std::endl;
+        std::cout << colors::grun << "invalid pass: try again" << colors::reset << std::endl;
         pass.clear();
     }
 }
@@ -57,7 +57,7 @@ std::size_t get_user_password()
 std::string get_msg()
 {
     std::string msg;
-    std::cout << COLOR_GRUN  << "Your:" << COLOR_RESET << '\n' << '\t';
+    std::cout << colors::grun << "Your:" << colors::reset << '\n' << '\t';
     std::getline(std::cin, msg);
     return msg;
 }
@@ -65,7 +65,7 @@ std::string get_msg()
 std::string get_recipient()
 {
     std::string recip;
-    std::cout << COLOR_GRUN  << "Recipient:" << COLOR_RESET << " ";
+    std::cout << colors::grun << "Recipient:" << colors::reset << " ";
     std::getline(std::cin, recip);
     return recip;
 }

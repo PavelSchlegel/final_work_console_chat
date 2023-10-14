@@ -5,16 +5,13 @@
 #include <fstream>
 #include <sys/utsname.h>
 #include <chat/functions.hpp>
-
-#define COLOR_RED "\033[1;31m"
-#define COLOR_GRUN "\033[32m"
-#define COLOR_RESET "\033[0m"
+#include <chat/cout_color.hpp>
 
 int main (int argc, char* argv[])
 {
     star_print();
     start();
-    std::cout << COLOR_GRUN << "Server start..." << COLOR_RESET << std::endl;
+    std::cout << colors::grun << "Server start..." << colors::reset << std::endl;
     std::fstream logger("log_server.txt", std::ios::out);
     using boost::asio::ip::tcp;
     chat::Server server(logger);
@@ -46,7 +43,7 @@ int main (int argc, char* argv[])
             }
         );
         io_context.run();
-        std::cout << COLOR_GRUN << "Listing..." << COLOR_RESET << std::endl;
+        std::cout << colors::grun << "Listing..." << colors::reset << std::endl;
     } catch (std::exception& e) {
         logger << "SERVER_SPAWN:" << e.what() << std::endl;
         std::cerr << "Exception: " << e.what() << "\n";
