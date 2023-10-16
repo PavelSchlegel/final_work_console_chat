@@ -3,6 +3,7 @@
 chat::TerminalClient::TerminalClient(chat::IServer* server, std::ostream& logger)
 : m_server_handle(server->connect(*this))
 , m_logger(logger)
+, stop_flag(false)
 {
     methods.push_back(std::make_pair("msg_send", &TerminalClient::msg_send));
     methods.push_back(std::make_pair("new_user", &TerminalClient::new_user));
@@ -11,6 +12,15 @@ chat::TerminalClient::TerminalClient(chat::IServer* server, std::ostream& logger
     methods.push_back(std::make_pair("exit", &TerminalClient::exit));
     methods.push_back(std::make_pair("info", &TerminalClient::info));
     methods.push_back(std::make_pair("close", &TerminalClient::close));
+
+    std::string line;
+    while ( ! stop_flag ) {
+        std::getline(std::cin, line);
+        this->go(line);
+        if ( ! line.empty()) {
+            std::cout << line << std::endl;
+        }
+    }
 }
 
 chat::TerminalClient::~TerminalClient()
@@ -45,7 +55,7 @@ void chat::TerminalClient::exit()
 
 void chat::TerminalClient::close()
 {
-    throw std::runtime_error("programm close");
+    stop_flag = true;
 }
 
 void chat::TerminalClient::go(std::string& command)
@@ -53,6 +63,7 @@ void chat::TerminalClient::go(std::string& command)
     if (std::isdigit(command[0])) {
         int pos = std::stoi(command);
         if (pos > methods.size()) {
+            command.clear();
             return;
         }
         (*this.*(methods[pos].second))();

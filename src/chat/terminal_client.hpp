@@ -15,6 +15,7 @@ namespace chat {
         IServerHandle& m_server_handle;
         Method_list methods;
         std::ostream& m_logger;
+        bool stop_flag;
 
         void msg_send();
         void new_user();

@@ -12,7 +12,6 @@ int main(int argc, char* argv[])
     MainArg args(argc, argv);
     try {
         chat::NetServer server(args[0], args[1], logger);
-        chat::TerminalClient client(&server, logger);
         star_print();
         std::cout << 
                 colors::grun << "Welcom to console chat!"
@@ -23,20 +22,9 @@ int main(int argc, char* argv[])
                 << "Enter your command or info to see methods:"
                 << colors::reset << std::endl;
         star_print();
-        try {
-            while (true) {
-                std::string line;
-                std::getline(std::cin, line);
-                client.go(line);
-                if ( ! line.empty()) {
-                    std::cout << line << std::endl;
-                }
-            }
-        } catch (...) {
-            logger << "PROGRAMM CLOSE" << std::endl;
-            std::cout << colors::grun << "By!" << colors::reset << std::endl;
-            exit(0);
-        }
+        chat::TerminalClient client(&server, logger);
+        logger << "PROGRAMM CLOSE" << std::endl;
+        std::cout << colors::grun << "By!" << colors::reset << std::endl;
     } catch (...) {
         logger << "SERVER CONNECTION PROBLEM" << std::endl;
         std::cerr <<
