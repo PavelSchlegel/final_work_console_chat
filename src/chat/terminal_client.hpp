@@ -24,6 +24,7 @@ namespace chat {
         void exit();
         void info();
         void close();
+        void go(std::string& method);
 
     public:
 
@@ -31,6 +32,5 @@ namespace chat {
         ~TerminalClient();
 
         void msg_recv(const std::string& who, const std::string& msg) override;
-        void go(std::string& method);
     };
 } // namespace chat
