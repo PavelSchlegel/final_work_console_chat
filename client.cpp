@@ -6,6 +6,7 @@
 
 int main(int argc, char* argv[])
 {
+    //
     star_print();
     start();
     std::fstream logger("log_client.txt", std::ios::out);
